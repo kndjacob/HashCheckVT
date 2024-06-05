@@ -18,7 +18,7 @@ cls
 
 $files = Get-ChildItem $DownloadsDirectory
 foreach ($file in $files) {
-    $hash = Get-FileChecksum -FilePath $file.FullName -Algorithm "SHA256"
+    $hash = Get-FileChecksum -FilePath $file.FullName -Algorithm "MD5"
     if ($hash -ne $null) {
         $statusCode, $positives = Submit-HashToVirusTotal -Hash $hash
         if ($statusCode -ne $null) {
