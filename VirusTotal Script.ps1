@@ -2,7 +2,7 @@ function Submit-HashToVirusTotal {
     param ([string]$Hash)
 
     try {
-        $apiKey = ""#Write your API Key Here - To get one just sign up for an account with VirusTotal!
+        $apiKey = "" #API Key Here.
         $url = "https://www.virustotal.com/vtapi/v2/file/report?apikey=$apiKey&resource=$Hash"
         $result = Invoke-RestMethod -Uri $url -Method Get
         return $result.response_code, $result.positives
@@ -14,14 +14,14 @@ function Submit-HashToVirusTotal {
 
 $DownloadsDirectory = "C:\Users\$Env:UserName\Downloads"
 
-cls
+Clear-Host
 
 $files = Get-ChildItem $DownloadsDirectory
 foreach ($file in $files) {
-    $hash = Get-FileChecksum -FilePath $file.FullName -Algorithm "MD5"
-    if ($hash -ne $null) {
+    $hash = Get-FileHash -Path $file.FullName -Algorithm "MD5"
+    if ($null -ne $hash) {
         $statusCode, $positives = Submit-HashToVirusTotal -Hash $hash
-        if ($statusCode -ne $null) {
+        if ($null -ne $statusCode) {
             if ($statusCode -eq 1 -and $positives -gt 0) {
                 Write-Host ("$($file.Name) MD5($hash): MALICIOUS - flagged by $($positives) antivirus engines.") -ForegroundColor Red
             }
